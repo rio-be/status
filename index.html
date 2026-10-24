@@ -79,6 +79,11 @@ h2 { margin: 0 0 12px; font: 700 18px/26px "Bricolage Grotesque", Figtree, ui-sa
 footer { margin-top: 24px; display: grid; gap: 6px; color: var(--ink-faint); font-size: 13px; line-height: 20px; max-width: 68ch; }
 footer p { margin: 0; }
 .hidden { display: none !important; }
+.settle { transition: opacity 220ms var(--ease); }
+.pending .settle { opacity: 0; visibility: hidden; }
+.sky svg.field { transition: opacity 400ms var(--ease); }
+.pending .sky svg.field { opacity: 0; }
+.pending .owl.on { opacity: 0; transform: translateY(14px); }
 
 @media (max-width: 639px) {
   .sky .inner { min-height: 470px; padding-top: 24px; padding-bottom: 40px; }
@@ -89,12 +94,13 @@ footer p { margin: 0; }
   .note { padding: 14px 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .settle, .sky svg.field { transition: none; }
   .owl { transition: none; transform: none; }
   .pop-down { animation: none; }
 }
 </style>
 </head>
-<body>
+<body class="pending">
 <header class="sky" aria-labelledby="headline">
   <svg class="field" id="field" aria-hidden="true"></svg>
   <nav class="topbar" aria-label="Brabo">
@@ -102,9 +108,9 @@ footer p { margin: 0; }
     <a class="open" href="https://brabo.team">Open Brabo</a>
   </nav>
   <div class="wrap inner">
-    <div class="say">
-      <h1 id="headline">Checking on Brabo</h1>
-      <p class="lede" id="lede">Looking at the server, every part of Bunny's network, and your own connection.</p>
+    <div class="say settle">
+      <h1 id="headline">Brabo is up.</h1>
+      <p class="lede" id="lede">The server answers, and every part of Bunny's network is passing people through.</p>
       <p class="meta" id="meta" aria-live="polite"></p>
     </div>
     <img class="owl" id="owl" alt="" width="184" height="147">
@@ -112,7 +118,7 @@ footer p { margin: 0; }
   <svg class="river" viewBox="0 0 1206 18" preserveAspectRatio="none" aria-hidden="true" id="river"></svg>
 </header>
 
-<main class="board wrap">
+<main class="board wrap settle">
   <section class="note hidden" id="note" aria-live="polite">
     <svg class="moon" viewBox="-12 -12 24 24" aria-hidden="true"><path d="M -0.51 -9.99 A 10 10 0 1 0 9.02 4.32 A 8.6 8.6 0 0 1 -0.51 -9.99 Z" fill="#F3F0DF" opacity="0.92"/></svg>
     <span class="who">From the Brabo team</span>
@@ -340,15 +346,19 @@ footer p { margin: 0; }
     drawSky(pops);
   }
 
-  function load() {
-    fetch("status.json?t=" + Date.now(), { cache: "no-store" })
+  function load(done) {
+    var status = fetch("status.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(render)
       .catch(function () {
+        headline("Brabo status", "unavailable.");
+        $("lede").textContent = "This page couldn't load the latest check. It tries again every minute.";
         set("server-state", "muted", "Unknown");
-        $("server-detail").textContent = "This page couldn't load the latest check. It tries again every minute.";
+        $("server-detail").textContent = "The latest check couldn't be loaded.";
+        set("edges-state", "muted", "Unknown");
+        $("edges-detail").textContent = "The latest check couldn't be loaded.";
       });
-    fetch("note.json?t=" + Date.now(), { cache: "no-store" })
+    var note = fetch("note.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (n) {
         var text = (n && n.message || "").trim();
@@ -356,9 +366,10 @@ footer p { margin: 0; }
         $("note-text").textContent = text;
       })
       .catch(function () {});
+    Promise.all([status, note]).then(function () { if (done) done(); });
   }
 
-  function probe() {
+  function probe(done) {
     var started = performance.now();
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer = setTimeout(function () { if (controller) controller.abort(); }, 10000);
@@ -367,18 +378,26 @@ footer p { margin: 0; }
         clearTimeout(timer);
         set("you-state", "ok", "Reachable");
         $("you-detail").textContent = "brabo.team answered your browser in " + Math.round(performance.now() - started) + " ms.";
+        if (done) done();
       })
       .catch(function () {
         clearTimeout(timer);
         set("you-state", "danger", "Not reachable");
         $("you-detail").textContent = "Your browser couldn't reach brabo.team. If the checks below look fine, the Bunny edge near you is the likely cause; it usually clears within minutes.";
+        if (done) done();
       });
   }
 
+  var ready = { status: false, probe: false };
+  function settle(part) {
+    ready[part] = true;
+    if (ready.status && ready.probe) document.body.classList.remove("pending");
+  }
+  setTimeout(function () { settle("probe"); }, 1500);
+
   drawRiver();
-  drawSky([]);
-  load();
-  probe();
+  load(function () { settle("status"); });
+  probe(function () { settle("probe"); });
   setInterval(function () { load(); probe(); }, 60000);
 })();
 </script>
