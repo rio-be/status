@@ -32,7 +32,10 @@ a:focus-visible { outline: 2px solid var(--brand-text); outline-offset: 2px; bor
 
 .sky { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(180deg, var(--ground) 0%, var(--sky) 62%, var(--horizon) 100%); }
 .sky svg.field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
-.sky .inner { position: relative; display: flex; flex-direction: column; min-height: clamp(420px, 64vh, 600px); padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: 46px; }
+.topbar { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: max(20px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left)); }
+.topbar .open { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--ink-label); }
+.topbar .open:hover { color: var(--ink-bright); }
+.sky .inner { position: relative; display: flex; flex-direction: column; min-height: clamp(360px, 56vh, 540px); padding-top: 32px; padding-bottom: 46px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-label); font-size: 14px; font-weight: 600; text-decoration: none; letter-spacing: 0.01em; }
 .brand img { width: 26px; height: 26px; }
 .brand:hover { color: var(--ink-bright); }
@@ -78,9 +81,10 @@ footer p { margin: 0; }
 .hidden { display: none !important; }
 
 @media (max-width: 639px) {
-  .sky .inner { min-height: 520px; padding-bottom: 40px; }
+  .sky .inner { min-height: 470px; padding-top: 24px; padding-bottom: 40px; }
+  .topbar .open { display: none; }
   .say { padding-right: 0; }
-  .owl { top: 72px; bottom: auto; right: 14px; width: 112px; }
+  .owl { top: 8px; bottom: auto; right: 14px; width: 112px; }
   .check { padding: 16px; }
   .note { padding: 14px 16px; }
 }
@@ -93,8 +97,11 @@ footer p { margin: 0; }
 <body>
 <header class="sky" aria-labelledby="headline">
   <svg class="field" id="field" aria-hidden="true"></svg>
-  <div class="wrap inner">
+  <nav class="topbar" aria-label="Brabo">
     <a class="brand" href="https://brabo.team"><img src="icon.svg" alt="" width="26" height="26">Brabo status</a>
+    <a class="open" href="https://brabo.team">Open Brabo</a>
+  </nav>
+  <div class="wrap inner">
     <div class="say">
       <h1 id="headline">Checking on Brabo</h1>
       <p class="lede" id="lede">Looking at the server, every part of Bunny's network, and your own connection.</p>
@@ -250,8 +257,10 @@ footer p { margin: 0; }
     img.classList.remove("on");
     img.setAttribute("data-pose", pose);
     img.alt = label;
-    img.onload = function () { requestAnimationFrame(function () { img.classList.add("on"); }); };
+    var show = function () { requestAnimationFrame(function () { requestAnimationFrame(function () { img.classList.add("on"); }); }); };
+    img.onload = show;
     img.src = "owl/owl-" + pose + ".png";
+    if (img.complete && img.naturalWidth) show();
   }
 
   function fixMeta() {
