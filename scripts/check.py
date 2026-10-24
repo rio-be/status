@@ -34,7 +34,7 @@ def check() -> dict:
     except Exception as exc:
         server = {"state": "down", "detail": f"no answer ({type(exc).__name__})"}
 
-    edges = {"watched": None, "down": [], "checked_at": None}
+    edges = {"watched": None, "down": [], "pops": [], "checked_at": None}
     if server["state"] == "ok":
         try:
             _, body, _ = fetch("/api/status")
@@ -42,6 +42,7 @@ def check() -> dict:
             edges = {
                 "watched": data.get("edges_watched"),
                 "down": data.get("edges_down") or [],
+                "pops": data.get("pops") or [],
                 "checked_at": data.get("checked_at"),
             }
         except Exception:

@@ -2,160 +2,333 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Brabo status</title>
-<meta name="description" content="Whether Brabo is up, and whether the network in front of it is reaching everyone.">
+<meta name="description" content="Whether Brabo is up, and whether every part of the network in front of it is reaching people.">
 <meta name="theme-color" content="#070C1A">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/bricolage-800.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: "Bricolage Grotesque"; src: url(fonts/bricolage-800.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Bricolage Grotesque"; src: url(fonts/bricolage-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "Figtree"; src: url(fonts/figtree-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Figtree"; src: url(fonts/figtree-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
 :root {
-  --ground: #070C1A; --sky: #0B1532; --surface: #0F172C; --line: #1D2A4D;
-  --ink-bright: #F4F7FD; --ink: #E2E8F6; --ink-soft: #C3CDE5; --ink-muted: #A2AECD; --ink-quiet: #8E9ABB; --ink-faint: #7E8BAF;
-  --ok: #43C98E; --ok-text: #6FD3A3; --warn: #F5B544; --warn-text: #FCD34D; --danger: #E5484D; --danger-text: #FF8F86;
+  --ground: #070C1A; --sky: #0B1532; --horizon: #13234D; --surface: #0F172C; --line: #1D2A4D;
+  --ink-bright: #F4F7FD; --ink: #E2E8F6; --ink-soft: #C3CDE5; --ink-label: #B1BCD8; --ink-muted: #A2AECD; --ink-quiet: #8E9ABB; --ink-faint: #7E8BAF;
+  --moon: #F3F0DF; --ok: #43C98E; --ok-text: #6FD3A3; --warn: #F5B544; --warn-text: #FCD34D; --danger: #E5484D; --danger-text: #FF8F86;
   --muted: #5D6A8E; --brand-text: #6CA8FF; --brand-soft: #AACCFF; --edge: inset 0 1px 0 0 rgba(170,198,255,0.07);
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--ground); color: var(--ink); }
-body { font: 400 14px/22px Figtree, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-::selection { background: rgba(108,168,255,0.32); }
-a { color: var(--brand-text); text-underline-offset: 3px; }
-a:hover { color: var(--brand-soft); }
+body { font: 400 15px/24px Figtree, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+::selection { background: rgba(108,168,255,0.32); color: var(--ink-bright); }
+a { color: var(--brand-text); text-decoration: underline; text-decoration-color: rgba(108,168,255,0.4); text-underline-offset: 3px; transition: color 150ms var(--ease), text-decoration-color 150ms var(--ease); }
+a:hover { color: var(--brand-soft); text-decoration-color: currentColor; }
 a:focus-visible { outline: 2px solid var(--brand-text); outline-offset: 2px; border-radius: 4px; }
-main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; }
-.sky { position: relative; overflow: hidden; border-radius: 20px; background: linear-gradient(180deg, var(--ground), var(--sky)); box-shadow: var(--edge); padding: 24px 20px 26px; }
-.sky::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 12% 22%, #fff9 50%, transparent 51%), radial-gradient(1px 1px at 34% 60%, #fff6 50%, transparent 51%), radial-gradient(1.5px 1.5px at 72% 18%, #fffa 50%, transparent 51%), radial-gradient(1px 1px at 86% 54%, #fff7 50%, transparent 51%), radial-gradient(1px 1px at 58% 32%, #fff5 50%, transparent 51%); pointer-events: none; }
-.brand { position: relative; display: flex; align-items: center; gap: 10px; color: var(--ink-muted); font-size: 13px; }
-.brand img { width: 22px; height: 22px; }
-h1 { position: relative; margin: 14px 0 0; font: 800 28px/36px "Bricolage Grotesque", Figtree, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.025em; color: var(--ink-bright); text-wrap: balance; }
-.lede { position: relative; margin: 6px 0 0; color: var(--ink-muted); min-height: 22px; }
-.note { margin-top: 16px; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); padding: 14px 16px; }
-.note p { margin: 0; }
-.note .who { font-size: 12px; line-height: 16px; color: var(--ink-quiet); margin-bottom: 4px; }
-.list { list-style: none; margin: 16px 0 0; padding: 0; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); overflow: hidden; }
-.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 14px 16px; border-top: 1px solid var(--line); }
-.row:first-child { border-top: 0; }
-.name { color: var(--ink-bright); font-weight: 600; }
-.detail { grid-column: 1 / -1; color: var(--ink-muted); font-size: 13px; line-height: 20px; }
-.detail ul { margin: 6px 0 0; padding: 0; list-style: none; }
-.detail li + li { margin-top: 4px; }
-.status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12px; line-height: 16px; font-weight: 600; }
-.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.wrap { width: 100%; max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+.sky { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(180deg, var(--ground) 0%, var(--sky) 62%, var(--horizon) 100%); }
+.sky svg.field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.sky .inner { position: relative; display: flex; flex-direction: column; min-height: clamp(420px, 64vh, 600px); padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: 46px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-label); font-size: 14px; font-weight: 600; text-decoration: none; letter-spacing: 0.01em; }
+.brand img { width: 26px; height: 26px; }
+.brand:hover { color: var(--ink-bright); }
+.say { margin-top: auto; max-width: 620px; padding-right: 150px; }
+h1 { margin: 0; font: 800 clamp(38px, 7.2vw, 72px)/0.98 "Bricolage Grotesque", Figtree, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.04em; color: var(--ink-bright); text-wrap: balance; }
+h1 .tail { color: var(--brand-text); }
+.lede { margin: 18px 0 0; max-width: 46ch; font-size: 17px; line-height: 28px; color: var(--ink-label); text-wrap: pretty; }
+.meta { margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--ink-quiet); font-size: 13px; line-height: 20px; }
+.meta span { white-space: nowrap; }
+.meta span + span::before { content: "·"; margin-right: 10px; color: var(--ink-faint); }
+.meta span.wrap-start::before { content: none; }
+.num { font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.owl { position: absolute; right: 8px; bottom: 11px; width: clamp(128px, 17vw, 184px); height: auto; opacity: 0; transform: translateY(14px); transition: opacity 240ms var(--ease), transform 240ms var(--ease); pointer-events: none; }
+.owl.on { opacity: 1; transform: none; }
+.river { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 18px; }
+
+.pop-label { font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; fill: var(--warn-text); letter-spacing: 0.02em; }
+.pop-down { transform-box: fill-box; transform-origin: center; animation: beacon 2.4s ease-in-out infinite; }
+@keyframes beacon { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.82); } }
+
+main.board { padding-top: 36px; padding-bottom: 56px; }
+.note { margin-bottom: 20px; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); padding: 16px 20px; display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: start; }
+.note .moon { width: 22px; height: 22px; margin-top: 2px; grid-row: span 2; }
+.note .who { font-size: 12px; line-height: 16px; color: var(--ink-quiet); }
+.note p { margin: 0; color: var(--ink-bright); font-size: 15px; line-height: 24px; }
+h2 { margin: 0 0 12px; font: 700 18px/26px "Bricolage Grotesque", Figtree, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.015em; color: var(--ink-bright); }
+.checks { list-style: none; margin: 0; padding: 0; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); overflow: hidden; }
+.check { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; padding: 18px 20px; border-top: 1px solid var(--line); }
+.check:first-child { border-top: 0; }
+.check .what { font-weight: 600; color: var(--ink-bright); }
+.check .why { grid-column: 1 / -1; color: var(--ink-muted); font-size: 14px; line-height: 22px; max-width: 68ch; }
+.downs { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.downs li { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; align-items: baseline; }
+.code { font: 600 12px/20px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--warn-text); background: rgba(245,181,68,0.1); border-radius: 6px; padding: 0 6px; }
+.status { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; font-size: 13px; line-height: 20px; font-weight: 600; }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .ok { color: var(--ok-text); } .ok::before { background: var(--ok); }
 .warn { color: var(--warn-text); } .warn::before { background: var(--warn); }
 .danger { color: var(--danger-text); } .danger::before { background: var(--danger); }
 .muted { color: var(--ink-quiet); } .muted::before { background: var(--muted); }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 12px; }
-footer { margin-top: 20px; color: var(--ink-faint); font-size: 12px; line-height: 18px; }
-footer p { margin: 0 0 6px; }
-.hidden { display: none; }
-@media (min-width: 640px) { main { padding-top: 48px; } .sky { padding: 28px 28px 30px; } h1 { font-size: 34px; line-height: 40px; } .row { padding: 16px 20px; } }
+footer { margin-top: 24px; display: grid; gap: 6px; color: var(--ink-faint); font-size: 13px; line-height: 20px; max-width: 68ch; }
+footer p { margin: 0; }
+.hidden { display: none !important; }
+
+@media (max-width: 639px) {
+  .sky .inner { min-height: 520px; padding-bottom: 40px; }
+  .say { padding-right: 0; }
+  .owl { top: 72px; bottom: auto; right: 14px; width: 112px; }
+  .check { padding: 16px; }
+  .note { padding: 14px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .owl { transition: none; transform: none; }
+  .pop-down { animation: none; }
+}
 </style>
 </head>
 <body>
-<main>
-  <header class="sky">
-    <div class="brand"><img src="icon.svg" alt="" width="22" height="22">Brabo</div>
-    <h1 id="headline">Brabo status</h1>
-    <p class="lede" id="lede">&nbsp;</p>
-  </header>
+<header class="sky" aria-labelledby="headline">
+  <svg class="field" id="field" aria-hidden="true"></svg>
+  <div class="wrap inner">
+    <a class="brand" href="https://brabo.team"><img src="icon.svg" alt="" width="26" height="26">Brabo status</a>
+    <div class="say">
+      <h1 id="headline">Checking on Brabo</h1>
+      <p class="lede" id="lede">Looking at the server, every part of Bunny's network, and your own connection.</p>
+      <p class="meta" id="meta" aria-live="polite"></p>
+    </div>
+    <img class="owl" id="owl" alt="" width="184" height="147">
+  </div>
+  <svg class="river" viewBox="0 0 1206 18" preserveAspectRatio="none" aria-hidden="true" id="river"></svg>
+</header>
 
+<main class="board wrap">
   <section class="note hidden" id="note" aria-live="polite">
-    <p class="who">From the Brabo team</p>
+    <svg class="moon" viewBox="-12 -12 24 24" aria-hidden="true"><path d="M -0.51 -9.99 A 10 10 0 1 0 9.02 4.32 A 8.6 8.6 0 0 1 -0.51 -9.99 Z" fill="#F3F0DF" opacity="0.92"/></svg>
+    <span class="who">From the Brabo team</span>
     <p id="note-text"></p>
   </section>
 
-  <ul class="list" aria-label="What we check">
-    <li class="row">
-      <span class="name">From your connection</span>
+  <h2>What we check</h2>
+  <ul class="checks">
+    <li class="check">
+      <span class="what">Your connection</span>
       <span class="status muted" id="you-state">Checking</span>
-      <span class="detail" id="you-detail">Your browser is trying to reach brabo.team right now.</span>
+      <span class="why" id="you-detail">Your browser is trying to reach brabo.team right now.</span>
     </li>
-    <li class="row">
-      <span class="name">Brabo's server</span>
-      <span class="status muted" id="server-state">Loading</span>
-      <span class="detail" id="server-detail">&nbsp;</span>
+    <li class="check">
+      <span class="what">Brabo's server</span>
+      <span class="status muted" id="server-state">Checking</span>
+      <span class="why" id="server-detail">GitHub's servers check that Brabo answers, every five minutes.</span>
     </li>
-    <li class="row">
-      <span class="name">Bunny, the network in front of Brabo</span>
-      <span class="status muted" id="edges-state">Loading</span>
-      <span class="detail" id="edges-detail">&nbsp;</span>
+    <li class="check">
+      <span class="what">Bunny, the network in front of Brabo</span>
+      <span class="status muted" id="edges-state">Checking</span>
+      <span class="why" id="edges-detail">Brabo tests every one of Bunny's edges every two minutes.</span>
     </li>
   </ul>
 
   <footer>
-    <p id="times">&nbsp;</p>
-    <p>Checked every 5 minutes from GitHub's servers, and every 2 minutes by Brabo itself across all of Bunny's edges. <a href="https://brabo.team">Go to Brabo</a></p>
+    <p id="times"></p>
+    <p>Each star in the sky above is one of Bunny's locations. A gold one is failing right now; visitors sent there can't reach Brabo until Bunny moves them. <a href="https://brabo.team">Open Brabo</a></p>
   </footer>
 </main>
+
 <script>
 (function () {
-  var countries = typeof Intl !== "undefined" && Intl.DisplayNames ? new Intl.DisplayNames(["en"], { type: "region" }) : null;
   var $ = function (id) { return document.getElementById(id); };
+  var SVG = "http://www.w3.org/2000/svg";
+  var regions = typeof Intl !== "undefined" && Intl.DisplayNames ? new Intl.DisplayNames(["en"], { type: "region" }) : null;
+  var lastPops = null;
 
-  function set(id, tone, text) {
-    var el = $(id);
-    el.className = "status " + tone;
-    el.textContent = text;
+  function seeded(seed) {
+    var h = 2166136261;
+    for (var i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+    return function () {
+      h = Math.imul(h ^ (h >>> 15), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return ((h ^= h >>> 16) >>> 0) / 4294967296;
+    };
   }
 
-  function when(iso) {
+  function wave(y, amp, len, phase) {
+    var pts = [];
+    for (var x = 0; x <= 1206; x += 6) pts.push(x + " " + (y + Math.sin(phase + (x / len) * Math.PI * 2) * amp).toFixed(2));
+    return "M " + pts.join(" L ");
+  }
+
+  function el(name, attrs, parent) {
+    var node = document.createElementNS(SVG, name);
+    for (var k in attrs) node.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(node);
+    return node;
+  }
+
+  function drawRiver() {
+    var river = $("river");
+    [[5, 1.6, 64, 0, 0.6, 1.5], [10.5, 1.4, 52, 1.7, 0.28, 1.25], [15.5, 1.2, 44, 3.1, 0.12, 1]].forEach(function (w) {
+      el("path", { d: wave(w[0], w[1], w[2], w[3]), stroke: "#6CA8FF", "stroke-opacity": w[4], "stroke-width": w[5], fill: "none", "vector-effect": "non-scaling-stroke" }, river);
+    });
+  }
+
+  function drawSky(pops) {
+    var field = $("field");
+    var key = JSON.stringify(pops || []);
+    if (key === lastPops) return;
+    lastPops = key;
+    while (field.firstChild) field.removeChild(field.firstChild);
+    var dust = seeded("brabo-status");
+    for (var i = 0; i < 46; i++) {
+      el("circle", { cx: (dust() * 100).toFixed(2) + "%", cy: (dust() * 74).toFixed(2) + "%", r: 0.6, fill: "#F4F7FD", opacity: (0.12 + dust() * 0.22).toFixed(2) }, field);
+    }
+    var moon = seeded("brabo-status-moon")();
+    var g = el("g", { transform: "translate(0,0)" }, field);
+    var svgMoon = el("svg", { x: (38 + moon * 14).toFixed(1) + "%", y: "34", width: "28", height: "28", viewBox: "-12 -12 24 24", overflow: "visible" }, g);
+    el("path", { d: "M -0.51 -9.99 A 10 10 0 1 0 9.02 4.32 A 8.6 8.6 0 0 1 -0.51 -9.99 Z", fill: "#F3F0DF", opacity: "0.92" }, svgMoon);
+    (pops || []).forEach(function (p) {
+      var r = seeded("pop-" + p.code);
+      var down = p.down > 0 && p.up === 0 ? "all" : p.down > 0 ? "some" : "";
+      var x = 3 + r() * 94;
+      var y = 8 + r() * 46;
+      if (down) {
+        x = 22 + r() * 72;
+        y = 9 + r() * 14;
+      }
+      var size = Math.min(2.2, 1 + Math.log2(1 + p.up + p.down) * 0.32);
+      var star = el("circle", { cx: x.toFixed(2) + "%", cy: y.toFixed(2) + "%", r: down ? 3.2 : size.toFixed(2), fill: down ? "#F5B544" : "#F4F7FD", opacity: down ? 1 : 0.78 }, field);
+      if (down) {
+        star.setAttribute("class", "pop-down");
+        el("circle", { cx: x.toFixed(2) + "%", cy: y.toFixed(2) + "%", r: 9, fill: "#F5B544", opacity: 0.12 }, field);
+        var label = el("text", { x: (x + (x > 88 ? -1.2 : 1.2)).toFixed(2) + "%", y: y.toFixed(2) + "%", dy: "4", "text-anchor": x > 88 ? "end" : "start", class: "pop-label" }, field);
+        label.textContent = p.code;
+      }
+      var title = el("title", {}, star);
+      title.textContent = p.code + ": " + p.up + " answering" + (p.down ? ", " + p.down + " failing" : "");
+    });
+  }
+
+  function set(id, tone, text) {
+    var node = $(id);
+    node.className = "status " + tone;
+    node.textContent = text;
+  }
+
+  function ago(iso) {
     if (!iso) return "unknown";
     var d = new Date(iso);
     var mins = Math.round((Date.now() - d.getTime()) / 60000);
-    var clock = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    if (mins < 1) return "just now (" + clock + ")";
-    if (mins < 90) return mins + " min ago (" + clock + ")";
-    return d.toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    if (mins < 1) return "just now";
+    if (mins < 90) return mins + " min ago";
+    var hours = Math.round(mins / 60);
+    if (hours < 36) return hours + " h ago";
+    return d.toLocaleDateString([], { day: "numeric", month: "short" });
+  }
+
+  function clock(iso) {
+    return iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
   }
 
   function place(code) {
-    try { return countries ? countries.of(code) : code; } catch (e) { return code; }
+    try { return regions ? regions.of(code) : code; } catch (e) { return code; }
   }
 
+  function headline(text, tail) {
+    var h = $("headline");
+    h.textContent = text + " ";
+    var span = document.createElement("span");
+    span.className = "tail";
+    span.textContent = tail;
+    h.appendChild(span);
+  }
+
+  function owl(pose, label) {
+    var img = $("owl");
+    if (img.getAttribute("data-pose") === pose) return;
+    img.classList.remove("on");
+    img.setAttribute("data-pose", pose);
+    img.alt = label;
+    img.onload = function () { requestAnimationFrame(function () { img.classList.add("on"); }); };
+    img.src = "owl/owl-" + pose + ".png";
+  }
+
+  function fixMeta() {
+    var spans = $("meta").children;
+    for (var i = 0; i < spans.length; i++) {
+      spans[i].classList.remove("wrap-start");
+      if (i > 0 && spans[i].offsetTop > spans[i - 1].offsetTop) spans[i].classList.add("wrap-start");
+    }
+  }
+
+  window.addEventListener("resize", fixMeta);
+
   function render(s) {
-    var headline = { ok: "Everything is working", degraded: "Some visitors can't reach Brabo", down: "Brabo isn't answering" }[s.overall] || "Brabo status";
-    var lede = {
-      ok: "Brabo and the network in front of it are answering normally.",
-      degraded: "Brabo itself is up, but part of Bunny's network isn't passing visitors through.",
-      down: "Our checks can't reach Brabo. We're looking into it."
-    }[s.overall] || "";
-    $("headline").textContent = headline;
-    $("lede").textContent = lede;
-    document.title = headline + " · Brabo status";
+    var edges = s.edges || {};
+    var down = edges.down || [];
+    var pops = edges.pops || [];
+    if (s.overall === "ok") {
+      headline("Brabo is", "up.");
+      $("lede").textContent = "The server answers, and every part of Bunny's network is passing people through.";
+      owl("check", "Owlbert holding up a green check");
+    } else if (s.overall === "degraded") {
+      headline("Brabo is up, but some people", "can't reach it.");
+      $("lede").textContent = "Part of Bunny's network isn't passing people through. Brabo itself is fine; affected visitors usually get moved to a working edge within minutes.";
+      owl("magnify", "Owlbert looking closely through a magnifying glass");
+    } else {
+      headline("Brabo isn't", "answering.");
+      $("lede").textContent = "Our checks can't reach Brabo's server. We're on it.";
+      owl("end", "Owlbert looking worried");
+    }
+    document.title = $("headline").textContent + " · Brabo status";
+
+    var meta = $("meta");
+    meta.textContent = "";
+    [["Checked ", ago(s.checked_at)], pops.length ? ["", pops.length + " Bunny locations"] : null, edges.watched ? ["", edges.watched + " edges watched"] : null].forEach(function (part) {
+      if (!part) return;
+      var span = document.createElement("span");
+      span.textContent = part[0] + part[1];
+      meta.appendChild(span);
+    });
+    fixMeta();
 
     var server = s.server || {};
     set("server-state", server.state === "ok" ? "ok" : "danger", server.state === "ok" ? "Answering" : "Not answering");
-    $("server-detail").textContent = server.state === "ok" ? "Brabo " + (server.detail || "answered") + " to GitHub's check." : "GitHub's check got " + (server.detail || "no answer") + ".";
+    $("server-detail").textContent = server.state === "ok"
+      ? "Brabo " + (server.detail || "answered") + " when GitHub's servers last checked."
+      : "GitHub's servers got " + (server.detail || "no answer") + " when they last checked.";
 
-    var edges = s.edges || {};
-    var down = edges.down || [];
     var detail = $("edges-detail");
     detail.textContent = "";
     if (s.overall === "down" && !down.length) {
       set("edges-state", "muted", "Unknown");
-      detail.textContent = "We can't read the edge checks while Brabo's server isn't answering.";
+      detail.textContent = "The edge checks run inside Brabo, so they can't report while the server is down.";
     } else if (!down.length) {
       set("edges-state", "ok", "Answering");
-      detail.textContent = edges.watched ? "All " + edges.watched + " edges we watch are passing visitors through." : "All edges we watch are passing visitors through.";
+      detail.textContent = (edges.watched ? "All " + edges.watched + " edges" : "Every edge") + (pops.length ? " across " + pops.length + " locations" : "") + " are passing people through.";
     } else {
-      set("edges-state", "warn", down.length === 1 ? "1 edge down" : down.length + " edges down");
-      var intro = document.createElement("span");
-      intro.textContent = "Visitors sent to these edges can't reach Brabo until Bunny fixes them or moves them elsewhere:";
-      var ul = document.createElement("ul");
+      set("edges-state", "warn", down.length === 1 ? "1 edge failing" : down.length + " edges failing");
+      detail.appendChild(document.createTextNode("People sent to these edges can't reach Brabo until Bunny moves them to a working one."));
+      var list = document.createElement("ul");
+      list.className = "downs";
       down.forEach(function (e) {
         var li = document.createElement("li");
+        var code = document.createElement("span");
+        code.className = "code";
+        code.textContent = e.pop || "?";
+        var text = document.createElement("span");
         var who = (e.countries || []).map(place).join(", ");
-        li.textContent = "Edge " + (e.pop || "unknown") + (who ? ", used by visitors in " + who : "") + " · down since " + when(e.since) + (e.reason ? " · " + e.reason : "");
-        ul.appendChild(li);
+        text.textContent = (who ? "Used by people in " + who + ". " : "") + "Failing since " + clock(e.since) + (e.reason ? " (" + e.reason + ")" : "") + ".";
+        li.appendChild(code);
+        li.appendChild(text);
+        list.appendChild(li);
       });
-      detail.appendChild(intro);
-      detail.appendChild(ul);
+      detail.appendChild(list);
     }
-    $("times").textContent = "Last checked " + when(s.checked_at) + ". Last change " + when(s.changed_at) + ".";
+
+    $("times").textContent = "Last checked " + ago(s.checked_at) + (s.checked_at ? " (" + clock(s.checked_at) + ")" : "") + ". Last change " + ago(s.changed_at) + (s.changed_at ? " (" + clock(s.changed_at) + ")" : "") + ".";
+    drawSky(pops);
   }
 
   function load() {
@@ -164,7 +337,7 @@ footer p { margin: 0 0 6px; }
       .then(render)
       .catch(function () {
         set("server-state", "muted", "Unknown");
-        $("server-detail").textContent = "This page couldn't load the latest check. It will try again in a minute.";
+        $("server-detail").textContent = "This page couldn't load the latest check. It tries again every minute.";
       });
     fetch("note.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.json(); })
@@ -189,10 +362,12 @@ footer p { margin: 0 0 6px; }
       .catch(function () {
         clearTimeout(timer);
         set("you-state", "danger", "Not reachable");
-        $("you-detail").textContent = "Your browser couldn't reach brabo.team. If the checks above look fine, the Bunny edge near you is the likely cause; it usually clears within minutes.";
+        $("you-detail").textContent = "Your browser couldn't reach brabo.team. If the checks below look fine, the Bunny edge near you is the likely cause; it usually clears within minutes.";
       });
   }
 
+  drawRiver();
+  drawSky([]);
   load();
   probe();
   setInterval(function () { load(); probe(); }, 60000);
