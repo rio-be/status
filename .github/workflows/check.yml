@@ -1,0 +1,30 @@
+name: check
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Brabo
+        run: python3 scripts/check.py
+      - name: Publish a change
+        run: |
+          git diff --quiet status.json && exit 0
+          git config user.name "brabo-status"
+          git config user.email "brabo-status@users.noreply.github.com"
+          git add status.json
+          git commit -m "Status: $(python3 -c 'import json;print(json.load(open("status.json"))["overall"])')"
+          git push

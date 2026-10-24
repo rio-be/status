@@ -1,0 +1,14 @@
+{
+  "overall": "ok",
+  "server": {
+    "state": "ok",
+    "detail": "answered in 138 ms"
+  },
+  "edges": {
+    "watched": 423,
+    "down": [],
+    "checked_at": "2026-10-24T21:42:53.978578Z"
+  },
+  "changed_at": "2026-10-24T21:45:17+00:00",
+  "checked_at": "2026-10-24T21:45:17+00:00"
+}

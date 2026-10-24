@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brabo status</title>
+<meta name="description" content="Whether Brabo is up, and whether the network in front of it is reaching everyone.">
+<meta name="theme-color" content="#070C1A">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: "Bricolage Grotesque"; src: url(fonts/bricolage-800.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url(fonts/figtree-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url(fonts/figtree-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+:root {
+  --ground: #070C1A; --sky: #0B1532; --surface: #0F172C; --line: #1D2A4D;
+  --ink-bright: #F4F7FD; --ink: #E2E8F6; --ink-soft: #C3CDE5; --ink-muted: #A2AECD; --ink-quiet: #8E9ABB; --ink-faint: #7E8BAF;
+  --ok: #43C98E; --ok-text: #6FD3A3; --warn: #F5B544; --warn-text: #FCD34D; --danger: #E5484D; --danger-text: #FF8F86;
+  --muted: #5D6A8E; --brand-text: #6CA8FF; --brand-soft: #AACCFF; --edge: inset 0 1px 0 0 rgba(170,198,255,0.07);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ground); color: var(--ink); }
+body { font: 400 14px/22px Figtree, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+::selection { background: rgba(108,168,255,0.32); }
+a { color: var(--brand-text); text-underline-offset: 3px; }
+a:hover { color: var(--brand-soft); }
+a:focus-visible { outline: 2px solid var(--brand-text); outline-offset: 2px; border-radius: 4px; }
+main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; }
+.sky { position: relative; overflow: hidden; border-radius: 20px; background: linear-gradient(180deg, var(--ground), var(--sky)); box-shadow: var(--edge); padding: 24px 20px 26px; }
+.sky::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 12% 22%, #fff9 50%, transparent 51%), radial-gradient(1px 1px at 34% 60%, #fff6 50%, transparent 51%), radial-gradient(1.5px 1.5px at 72% 18%, #fffa 50%, transparent 51%), radial-gradient(1px 1px at 86% 54%, #fff7 50%, transparent 51%), radial-gradient(1px 1px at 58% 32%, #fff5 50%, transparent 51%); pointer-events: none; }
+.brand { position: relative; display: flex; align-items: center; gap: 10px; color: var(--ink-muted); font-size: 13px; }
+.brand img { width: 22px; height: 22px; }
+h1 { position: relative; margin: 14px 0 0; font: 800 28px/36px "Bricolage Grotesque", Figtree, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.025em; color: var(--ink-bright); text-wrap: balance; }
+.lede { position: relative; margin: 6px 0 0; color: var(--ink-muted); min-height: 22px; }
+.note { margin-top: 16px; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); padding: 14px 16px; }
+.note p { margin: 0; }
+.note .who { font-size: 12px; line-height: 16px; color: var(--ink-quiet); margin-bottom: 4px; }
+.list { list-style: none; margin: 16px 0 0; padding: 0; border-radius: 20px; background: var(--surface); box-shadow: var(--edge); overflow: hidden; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 14px 16px; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.name { color: var(--ink-bright); font-weight: 600; }
+.detail { grid-column: 1 / -1; color: var(--ink-muted); font-size: 13px; line-height: 20px; }
+.detail ul { margin: 6px 0 0; padding: 0; list-style: none; }
+.detail li + li { margin-top: 4px; }
+.status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12px; line-height: 16px; font-weight: 600; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ok { color: var(--ok-text); } .ok::before { background: var(--ok); }
+.warn { color: var(--warn-text); } .warn::before { background: var(--warn); }
+.danger { color: var(--danger-text); } .danger::before { background: var(--danger); }
+.muted { color: var(--ink-quiet); } .muted::before { background: var(--muted); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 12px; }
+footer { margin-top: 20px; color: var(--ink-faint); font-size: 12px; line-height: 18px; }
+footer p { margin: 0 0 6px; }
+.hidden { display: none; }
+@media (min-width: 640px) { main { padding-top: 48px; } .sky { padding: 28px 28px 30px; } h1 { font-size: 34px; line-height: 40px; } .row { padding: 16px 20px; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="sky">
+    <div class="brand"><img src="icon.svg" alt="" width="22" height="22">Brabo</div>
+    <h1 id="headline">Brabo status</h1>
+    <p class="lede" id="lede">&nbsp;</p>
+  </header>
+
+  <section class="note hidden" id="note" aria-live="polite">
+    <p class="who">From the Brabo team</p>
+    <p id="note-text"></p>
+  </section>
+
+  <ul class="list" aria-label="What we check">
+    <li class="row">
+      <span class="name">From your connection</span>
+      <span class="status muted" id="you-state">Checking</span>
+      <span class="detail" id="you-detail">Your browser is trying to reach brabo.team right now.</span>
+    </li>
+    <li class="row">
+      <span class="name">Brabo's server</span>
+      <span class="status muted" id="server-state">Loading</span>
+      <span class="detail" id="server-detail">&nbsp;</span>
+    </li>
+    <li class="row">
+      <span class="name">Bunny, the network in front of Brabo</span>
+      <span class="status muted" id="edges-state">Loading</span>
+      <span class="detail" id="edges-detail">&nbsp;</span>
+    </li>
+  </ul>
+
+  <footer>
+    <p id="times">&nbsp;</p>
+    <p>Checked every 5 minutes from GitHub's servers, and every 2 minutes by Brabo itself across all of Bunny's edges. <a href="https://brabo.team">Go to Brabo</a></p>
+  </footer>
+</main>
+<script>
+(function () {
+  var countries = typeof Intl !== "undefined" && Intl.DisplayNames ? new Intl.DisplayNames(["en"], { type: "region" }) : null;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function set(id, tone, text) {
+    var el = $(id);
+    el.className = "status " + tone;
+    el.textContent = text;
+  }
+
+  function when(iso) {
+    if (!iso) return "unknown";
+    var d = new Date(iso);
+    var mins = Math.round((Date.now() - d.getTime()) / 60000);
+    var clock = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    if (mins < 1) return "just now (" + clock + ")";
+    if (mins < 90) return mins + " min ago (" + clock + ")";
+    return d.toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function place(code) {
+    try { return countries ? countries.of(code) : code; } catch (e) { return code; }
+  }
+
+  function render(s) {
+    var headline = { ok: "Everything is working", degraded: "Some visitors can't reach Brabo", down: "Brabo isn't answering" }[s.overall] || "Brabo status";
+    var lede = {
+      ok: "Brabo and the network in front of it are answering normally.",
+      degraded: "Brabo itself is up, but part of Bunny's network isn't passing visitors through.",
+      down: "Our checks can't reach Brabo. We're looking into it."
+    }[s.overall] || "";
+    $("headline").textContent = headline;
+    $("lede").textContent = lede;
+    document.title = headline + " · Brabo status";
+
+    var server = s.server || {};
+    set("server-state", server.state === "ok" ? "ok" : "danger", server.state === "ok" ? "Answering" : "Not answering");
+    $("server-detail").textContent = server.state === "ok" ? "Brabo " + (server.detail || "answered") + " to GitHub's check." : "GitHub's check got " + (server.detail || "no answer") + ".";
+
+    var edges = s.edges || {};
+    var down = edges.down || [];
+    var detail = $("edges-detail");
+    detail.textContent = "";
+    if (s.overall === "down" && !down.length) {
+      set("edges-state", "muted", "Unknown");
+      detail.textContent = "We can't read the edge checks while Brabo's server isn't answering.";
+    } else if (!down.length) {
+      set("edges-state", "ok", "Answering");
+      detail.textContent = edges.watched ? "All " + edges.watched + " edges we watch are passing visitors through." : "All edges we watch are passing visitors through.";
+    } else {
+      set("edges-state", "warn", down.length === 1 ? "1 edge down" : down.length + " edges down");
+      var intro = document.createElement("span");
+      intro.textContent = "Visitors sent to these edges can't reach Brabo until Bunny fixes them or moves them elsewhere:";
+      var ul = document.createElement("ul");
+      down.forEach(function (e) {
+        var li = document.createElement("li");
+        var who = (e.countries || []).map(place).join(", ");
+        li.textContent = "Edge " + (e.pop || "unknown") + (who ? ", used by visitors in " + who : "") + " · down since " + when(e.since) + (e.reason ? " · " + e.reason : "");
+        ul.appendChild(li);
+      });
+      detail.appendChild(intro);
+      detail.appendChild(ul);
+    }
+    $("times").textContent = "Last checked " + when(s.checked_at) + ". Last change " + when(s.changed_at) + ".";
+  }
+
+  function load() {
+    fetch("status.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(render)
+      .catch(function () {
+        set("server-state", "muted", "Unknown");
+        $("server-detail").textContent = "This page couldn't load the latest check. It will try again in a minute.";
+      });
+    fetch("note.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (n) {
+        var text = (n && n.message || "").trim();
+        $("note").classList.toggle("hidden", !text);
+        $("note-text").textContent = text;
+      })
+      .catch(function () {});
+  }
+
+  function probe() {
+    var started = performance.now();
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (controller) controller.abort(); }, 10000);
+    fetch("https://brabo.team/api/health?status-page=" + Date.now(), { mode: "no-cors", cache: "no-store", signal: controller ? controller.signal : undefined })
+      .then(function () {
+        clearTimeout(timer);
+        set("you-state", "ok", "Reachable");
+        $("you-detail").textContent = "brabo.team answered your browser in " + Math.round(performance.now() - started) + " ms.";
+      })
+      .catch(function () {
+        clearTimeout(timer);
+        set("you-state", "danger", "Not reachable");
+        $("you-detail").textContent = "Your browser couldn't reach brabo.team. If the checks above look fine, the Bunny edge near you is the likely cause; it usually clears within minutes.";
+      });
+  }
+
+  load();
+  probe();
+  setInterval(function () { load(); probe(); }, 60000);
+})();
+</script>
+</body>
+</html>
