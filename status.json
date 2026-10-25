@@ -2,7 +2,7 @@
   "overall": "ok",
   "server": {
     "state": "ok",
-    "detail": "answered in 117 ms"
+    "detail": "answered in 377 ms"
   },
   "edges": {
     "watched": 423,
@@ -584,8 +584,8 @@
         "down": 0
       }
     ],
-    "checked_at": "2026-10-24T21:59:55.577940Z"
+    "checked_at": "2026-10-25T06:55:53.986965Z"
   },
   "changed_at": "2026-10-24T22:01:41+00:00",
-  "checked_at": "2026-10-24T22:01:41+00:00"
+  "checked_at": "2026-10-25T06:56:38+00:00"
 }
