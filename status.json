@@ -2,7 +2,7 @@
   "overall": "ok",
   "server": {
     "state": "ok",
-    "detail": "answered in 178 ms"
+    "detail": "answered in 362 ms"
   },
   "edges": {
     "watched": 423,
@@ -10,6 +10,11 @@
     "pops": [
       {
         "code": "ADL1",
+        "up": 1,
+        "down": 0
+      },
+      {
+        "code": "AE1",
         "up": 1,
         "down": 0
       },
@@ -186,11 +191,6 @@
       {
         "code": "FR1",
         "up": 30,
-        "down": 0
-      },
-      {
-        "code": "FU1",
-        "up": 1,
         "down": 0
       },
       {
@@ -584,8 +584,8 @@
         "down": 0
       }
     ],
-    "checked_at": "2026-10-25T23:37:08.411004Z"
+    "checked_at": "2026-10-26T06:58:19.018584Z"
   },
   "changed_at": "2026-10-24T22:01:41+00:00",
-  "checked_at": "2026-10-25T23:37:32+00:00"
+  "checked_at": "2026-10-26T06:59:31+00:00"
 }
