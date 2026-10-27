@@ -56,7 +56,6 @@ const PAGES = [
     lede: "Cloudflare couldn't get a reply from Brabo's server. It's usually back within a few minutes, and the status page says what we know.",
     owl: ["end", "Owlbert looking worried"],
     box: "::CLOUDFLARE_ERROR_500S_BOX::",
-    facts: true,
     actions: ["retry", "status"],
   },
   {
@@ -67,7 +66,6 @@ const PAGES = [
     lede: "Cloudflare couldn't send this request on to Brabo. That's a problem on our side, not yours.",
     owl: ["end", "Owlbert looking worried"],
     box: "::CLOUDFLARE_ERROR_1000S_BOX::",
-    facts: true,
     actions: ["retry", "status"],
   },
 ];
@@ -243,7 +241,7 @@ function fact(label, value, id, copy) {
 
 function page(p) {
   const boxPanel = p.box
-    ? `<section class="panel" aria-label="Details from Cloudflare">${p.boxNote ? `<p class="note">${p.boxNote}</p>` : ""}<div class="cf">${p.box}</div>${p.slow ? '<p class="slow hidden" id="slow">Taking a while? Make sure JavaScript and cookies are on, then reload this page.</p>' : ""}</section>`
+    ? `<section class="panel" aria-label="Details from Cloudflare">${p.boxNote ? `<p class="note">${p.boxNote}</p>` : ""}<div class="cf">${p.box}</div>${p.slow ? '<p class="slow hidden" id="slow">Taking a while? Make sure JavaScript and cookies are on, then reload this page.</p>' : ""}${!p.facts && p.actions ? `<div class="actions">${p.actions.map((a) => ACTIONS[a]).join("")}</div>` : ""}</section>`
     : "";
   const factsPanel = p.facts
     ? `<section class="panel" aria-label="Reference for staff"><dl class="facts">${fact("Reference", "::RAY_ID::", "", true)}${fact("Your IP", "::CLIENT_IP::")}${fact("Time", "", "when")}</dl>${p.actions ? `<div class="actions">${p.actions.map((a) => ACTIONS[a]).join("")}</div>` : ""}</section>`
