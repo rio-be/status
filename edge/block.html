@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Request blocked · Brabo</title>
+<meta name="theme-color" content="#070C1A">
+<link rel="icon" href="https://status.brabo.team/icon.svg" type="image/svg+xml">
+<link rel="preload" href="https://status.brabo.team/fonts/bricolage-800.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face { font-family: "Bricolage Grotesque"; src: url(https://status.brabo.team/fonts/bricolage-800.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Bricolage Grotesque"; src: url(https://status.brabo.team/fonts/bricolage-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url(https://status.brabo.team/fonts/figtree-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url(https://status.brabo.team/fonts/figtree-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url(https://status.brabo.team/fonts/figtree-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url(https://status.brabo.team/fonts/jbmono-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+:root {
+  --ground: #070C1A; --sky: #0B1532; --horizon: #13234D; --surface: #0F172C; --raised: #16213D; --pressed: #1F2D50; --line: #1D2A4D; --line-strong: #2A3963;
+  --ink-bright: #F4F7FD; --ink: #E2E8F6; --ink-soft: #C3CDE5; --ink-label: #B1BCD8; --ink-muted: #A2AECD; --ink-quiet: #8E9ABB; --ink-faint: #7E8BAF;
+  --brand: #2F6FEB; --brand-hover: #2964D6; --brand-pressed: #2559C2; --brand-text: #6CA8FF; --brand-soft: #AACCFF;
+  --edge: inset 0 1px 0 0 rgba(170,198,255,0.07);
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --sans: Figtree, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display: "Bricolage Grotesque", Figtree, ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ground); color: var(--ink); }
+body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; font: 400 15px/24px var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; -webkit-tap-highlight-color: transparent; }
+::selection { background: rgba(108,168,255,0.32); color: var(--ink-bright); }
+a { color: var(--brand-text); text-decoration: underline; text-decoration-color: rgba(108,168,255,0.4); text-underline-offset: 3px; transition: color 150ms var(--ease), text-decoration-color 150ms var(--ease); }
+a:hover { color: var(--brand-soft); text-decoration-color: currentColor; }
+:focus-visible { outline: 2px solid var(--brand-text); outline-offset: 2px; border-radius: 6px; }
+.wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+.sky { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(180deg, var(--ground) 0%, var(--sky) 62%, var(--horizon) 100%); }
+.field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: max(20px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left)); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-label); font-size: 14px; font-weight: 600; letter-spacing: 0.01em; text-decoration: none; }
+.brand img { width: 26px; height: 26px; border-radius: 7px; }
+.brand:hover, .topbar .quiet:hover { color: var(--ink-bright); }
+.topbar .quiet { font-size: 14px; font-weight: 600; color: var(--ink-label); text-decoration: none; }
+.inner { position: relative; display: flex; flex-direction: column; min-height: clamp(320px, 50vh, 460px); padding-top: 40px; padding-bottom: 46px; }
+.say { margin-top: auto; padding-right: 170px; }
+h1 { margin: 0; font: 800 clamp(36px, 6.4vw, 60px)/1 var(--display); letter-spacing: -0.04em; color: var(--ink-bright); text-wrap: balance; }
+h1 .tail { color: var(--brand-text); }
+.lede { margin: 16px 0 0; max-width: 48ch; font-size: 17px; line-height: 28px; color: var(--ink-label); text-wrap: pretty; }
+.owl { position: absolute; right: 12px; bottom: 11px; width: clamp(132px, 19vw, 176px); height: auto; opacity: 0; transform: translateY(14px); transition: opacity 260ms var(--ease), transform 320ms var(--ease); pointer-events: none; }
+.owl.on { opacity: 1; transform: none; }
+.river { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 18px; }
+
+main { flex: 1; padding-top: 32px; padding-bottom: 56px; }
+.panel { border-radius: 20px; background: var(--surface); box-shadow: var(--edge); padding: 22px 24px; }
+.panel + .panel { margin-top: 16px; }
+.note { margin: 0 0 14px; color: var(--ink-muted); font-size: 14px; line-height: 22px; }
+.slow { margin: 14px 0 0; color: var(--ink-quiet); font-size: 14px; line-height: 22px; }
+
+.cf { color: var(--ink); font-size: 14px; line-height: 22px; overflow-wrap: anywhere; }
+.cf h1, .cf h2, .cf h3 { margin: 0 0 6px; font: 700 16px/24px var(--display); letter-spacing: -0.015em; color: var(--ink-bright); }
+.cf p { margin: 0 0 10px; color: var(--ink-muted); max-width: 68ch; }
+.cf p:last-child { margin-bottom: 0; }
+.cf ul, .cf ol { margin: 0 0 10px; padding-left: 20px; color: var(--ink-muted); }
+.cf li + li { margin-top: 4px; }
+.cf strong, .cf b { color: var(--ink-soft); font-weight: 600; }
+.cf code { font: 500 12px/20px var(--mono); color: var(--ink-soft); }
+.cf noscript, .cf .cf-noscript { color: var(--ink-quiet); }
+
+.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+.facts dt { color: var(--ink-quiet); font-size: 13px; line-height: 22px; }
+.facts dd { margin: 0; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.facts .val { font: 500 13px/22px var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-bright); overflow-wrap: anywhere; }
+.copy { flex: none; height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: var(--raised); color: var(--ink-soft); font: 600 12px/28px var(--sans); cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease), transform 120ms var(--ease); }
+.copy:hover { background: var(--pressed); color: var(--ink-bright); }
+.copy:active { transform: scale(0.97); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border: 0; border-radius: 12px; background: var(--raised); color: var(--ink-bright); font: 600 14px/1 var(--sans); text-decoration: none; cursor: pointer; transition: background-color 150ms var(--ease), transform 120ms var(--ease); }
+.btn:hover { background: var(--pressed); color: var(--ink-bright); }
+.btn.primary { background: var(--brand); color: #fff; }
+.btn.primary:hover { background: var(--brand-hover); }
+.btn:active { transform: scale(0.97); }
+.btn.primary:active { background: var(--brand-pressed); }
+.hidden { display: none !important; }
+
+@media (max-width: 639px) {
+  .inner { min-height: 400px; padding-top: 24px; padding-bottom: 38px; }
+  .topbar .quiet { display: none; }
+  .say { padding-right: 0; }
+  .owl { top: 4px; bottom: auto; right: 14px; width: 112px; }
+  .panel { padding: 18px 16px; }
+  .facts { grid-template-columns: 1fr; gap: 2px 0; }
+  .facts dd + dt { margin-top: 8px; }
+  .btn { height: 44px; flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .owl { transition: none; transform: none; }
+  .btn, .copy, a { transition: none; }
+  .btn:active, .copy:active { transform: none; }
+}</style>
+</head>
+<body>
+<header class="sky">
+  <svg class="field" id="field" aria-hidden="true"></svg>
+  <nav class="topbar" aria-label="Brabo">
+    <a class="brand" href="https://brabo.team/"><img src="https://status.brabo.team/icon.svg" alt="" width="26" height="26">Brabo</a>
+    <a class="quiet" href="https://status.brabo.team/">Status</a>
+  </nav>
+  <div class="wrap inner">
+    <div class="say">
+      <h1>This request was <span class="tail">stopped.</span></h1>
+      <p class="lede">Brabo's firewall blocked it before it reached us. If you were just using Brabo, send staff the reference below so we can check what happened.</p>
+    </div>
+    <img class="owl" id="owl" src="https://status.brabo.team/owl/owl-clipboard.png" alt="Owlbert holding a checklist with a red cross on it" width="176" height="141">
+  </div>
+  <svg class="river" id="river" viewBox="0 0 1206 18" preserveAspectRatio="none" aria-hidden="true"></svg>
+</header>
+<main class="wrap">
+
+<section class="panel" aria-label="Reference for staff"><dl class="facts"><dt>Reference</dt><dd data-fact><span class="val">::RAY_ID::</span><button type="button" class="copy">Copy</button></dd><dt>Your IP</dt><dd data-fact><span class="val">::CLIENT_IP::</span></dd><dt>Time</dt><dd data-fact><span class="val" id="when"></span></dd></dl><div class="actions"><a class="btn primary" href="https://brabo.team/">Go to Brabo</a><a class="btn" href="https://status.brabo.team/">Status page</a></div></section>
+</main>
+<script>(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var SVG = "http://www.w3.org/2000/svg";
+  function seeded(seed) {
+    var h = 2166136261;
+    for (var i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+    return function () {
+      h = Math.imul(h ^ (h >>> 15), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return ((h ^= h >>> 16) >>> 0) / 4294967296;
+    };
+  }
+  function el(name, attrs, parent) {
+    var node = document.createElementNS(SVG, name);
+    for (var k in attrs) node.setAttribute(k, attrs[k]);
+    parent.appendChild(node);
+    return node;
+  }
+  function wave(y, amp, len, phase) {
+    var pts = [];
+    for (var x = 0; x <= 1206; x += 6) pts.push(x + " " + (y + Math.sin(phase + (x / len) * Math.PI * 2) * amp).toFixed(2));
+    return "M " + pts.join(" L ");
+  }
+  var field = $("field"), dust = seeded("brabo-edge");
+  for (var i = 0; i < 60; i++) {
+    el("circle", { cx: (dust() * 100).toFixed(2) + "%", cy: (dust() * 74).toFixed(2) + "%", r: dust() < 0.15 ? 1.2 : 0.7, fill: "#F4F7FD", opacity: (0.18 + dust() * 0.4).toFixed(2) }, field);
+  }
+  var moon = el("svg", { x: (40 + seeded("brabo-edge-moon")() * 14).toFixed(1) + "%", y: "30", width: "26", height: "26", viewBox: "-12 -12 24 24", overflow: "visible" }, field);
+  el("path", { d: "M -0.51 -9.99 A 10 10 0 1 0 9.02 4.32 A 8.6 8.6 0 0 1 -0.51 -9.99 Z", fill: "#F3F0DF", opacity: "0.92" }, moon);
+  [[5, 1.6, 64, 0, 0.6, 1.5], [10.5, 1.4, 52, 1.7, 0.28, 1.25], [15.5, 1.2, 44, 3.1, 0.12, 1]].forEach(function (w) {
+    el("path", { d: wave(w[0], w[1], w[2], w[3]), stroke: "#6CA8FF", "stroke-opacity": w[4], "stroke-width": w[5], fill: "none", "vector-effect": "non-scaling-stroke" }, $("river"));
+  });
+
+  var owl = $("owl");
+  var show = function () { requestAnimationFrame(function () { requestAnimationFrame(function () { owl.classList.add("on"); }); }); };
+  owl.onload = show;
+  owl.onerror = function () { owl.classList.add("hidden"); };
+  if (owl.complete && owl.naturalWidth) show();
+
+  var when = $("when");
+  if (when) when.textContent = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC";
+  var facts = document.querySelectorAll("[data-fact]");
+  for (var f = 0; f < facts.length; f++) {
+    var text = (facts[f].querySelector(".val").textContent || "").trim();
+    if (!text || text.indexOf("::") === 0) {
+      facts[f].classList.add("hidden");
+      if (facts[f].previousElementSibling) facts[f].previousElementSibling.classList.add("hidden");
+    }
+  }
+  var copies = document.querySelectorAll(".copy");
+  for (var c = 0; c < copies.length; c++) {
+    copies[c].addEventListener("click", function (e) {
+      var btn = e.currentTarget;
+      var value = btn.parentNode.querySelector(".val").textContent.trim();
+      var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(done, function () {});
+    });
+    if (!(navigator.clipboard && navigator.clipboard.writeText)) copies[c].classList.add("hidden");
+  }
+  var retry = $("retry");
+  if (retry) retry.addEventListener("click", function () { location.reload(); });
+  
+})();</script>
+</body>
+</html>
