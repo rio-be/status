@@ -2,7 +2,7 @@
   "overall": "degraded",
   "server": {
     "state": "ok",
-    "detail": "answered in 934 ms"
+    "detail": "answered in 694 ms"
   },
   "edges": {
     "watched": 423,
@@ -11,6 +11,18 @@
         "pop": "OG1",
         "countries": [],
         "since": "2026-10-27T00:16:00.022000Z",
+        "reason": "timed out"
+      },
+      {
+        "pop": "VN1",
+        "countries": [],
+        "since": "2026-10-27T14:12:00.024000Z",
+        "reason": "timed out"
+      },
+      {
+        "pop": "VN1",
+        "countries": [],
+        "since": "2026-10-27T14:18:00.058000Z",
         "reason": "timed out"
       }
     ],
@@ -582,8 +594,8 @@
       },
       {
         "code": "VN1",
-        "up": 6,
-        "down": 0
+        "up": 4,
+        "down": 2
       },
       {
         "code": "WA1",
@@ -591,8 +603,8 @@
         "down": 0
       }
     ],
-    "checked_at": "2026-10-27T02:16:00.025000Z"
+    "checked_at": "2026-10-27T14:20:00.064000Z"
   },
-  "changed_at": "2026-10-27T02:17:55+00:00",
-  "checked_at": "2026-10-27T02:17:55+00:00"
+  "changed_at": "2026-10-27T14:20:38+00:00",
+  "checked_at": "2026-10-27T14:20:38+00:00"
 }
