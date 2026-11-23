@@ -2,7 +2,7 @@
   "overall": "ok",
   "server": {
     "state": "ok",
-    "detail": "answered in 1140 ms"
+    "detail": "answered in 1074 ms"
   },
   "edges": {
     "watched": 0,
@@ -11,5 +11,5 @@
     "checked_at": null
   },
   "changed_at": "2026-10-27T19:29:30+00:00",
-  "checked_at": "2026-11-23T03:12:09+00:00"
+  "checked_at": "2026-11-23T12:41:29+00:00"
 }
